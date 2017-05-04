@@ -1,32 +1,29 @@
 package com.ayulit;
 
-/* SimpleApp.java */
-import org.apache.spark.api.java.*;
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.function.Function;
+/* SimpleApp.java */
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
 
 public class SimpleApp {
   public static void main(String[] args) {
-	
-	// Should be some file on your system  
-    String logFile = "/home/andrey/BigData/spark-2.1.0-bin-hadoop2.4/" + "README.md";
-    
-    // Initializing Spark
-    SparkConf conf = new SparkConf().setAppName("Simple Application").setMaster("local[4]");
-    JavaSparkContext sc = new JavaSparkContext(conf);
-    
-    JavaRDD<String> logData = sc.textFile(logFile).cache();
 
-    long numAs = logData.filter(new Function<String, Boolean>() {
-      public Boolean call(String s) { return s.contains("a"); }
-    }).count();
+      // Should be some file on your system in 'resources'
+      String logFile = "src/main/resources/README.md";
 
-    long numBs = logData.filter(new Function<String, Boolean>() {
-      public Boolean call(String s) { return s.contains("b"); }
-    }).count();
+      // Initializing Spark
+      SparkConf conf = new SparkConf().setAppName("Simple Application").setMaster("local[4]");
+      JavaSparkContext sc = new JavaSparkContext(conf);
 
-    System.out.println("Lines with a: " + numAs + ", lines with b: " + numBs);
-    
-    sc.stop();
+      // External Datasets
+      JavaRDD<String> logData = sc.textFile(logFile).cache();
+
+      // Sum sizes of all the lines using the map and reduce operations
+      Integer result = logData.map(s -> s.length()).reduce((a, b) ->  a + b);
+
+      System.out.println("result=" + result);
+
+      sc.stop();
+      
   }
 }
