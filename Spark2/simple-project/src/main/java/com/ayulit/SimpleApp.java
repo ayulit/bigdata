@@ -12,7 +12,7 @@ public class SimpleApp {
     String logFile = "/home/andrey/BigData/spark-2.1.0-bin-hadoop2.4/" + "README.md";
     
     // Initializing Spark
-    SparkConf conf = new SparkConf().setAppName("Simple Application");
+    SparkConf conf = new SparkConf().setAppName("Simple Application").setMaster("local[4]");
     JavaSparkContext sc = new JavaSparkContext(conf);
     
     JavaRDD<String> logData = sc.textFile(logFile).cache();
