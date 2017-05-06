@@ -6,6 +6,9 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
+//col("...") is preferable to df.col("...")
+import static org.apache.spark.sql.functions.col;
+
 public class DataFrames {
 
     public static void main(String[] args) {
@@ -32,6 +35,24 @@ public class DataFrames {
         // Displays the content of the DataFrame to stdout
         df.show();
 
+        
+        /* Untyped Dataset Operations (aka DataFrame Operations) */
+
+        
+        // Print the schema in a tree format
+        df.printSchema();
+
+        // Select only the "name" column
+        df.select("name").show();
+ 
+        // Select everybody, but increment the age by 1
+        df.select(col("name"), col("age").plus(1)).show();
+        
+        // Select people older than 26
+        df.filter(col("age").gt(26)).show();
+        
+        // Count people by age
+        df.groupBy("age").count().show();
         
         sc.close();
 
