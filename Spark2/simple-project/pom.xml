@@ -6,7 +6,7 @@
   
 	<dependencies>
 	
-		<!-- Spark dependency -->
+		<!-- Spark Core dependency -->
 	    <dependency>
 	      <groupId>org.apache.spark</groupId>
 	      <artifactId>spark-core_2.11</artifactId>
@@ -23,6 +23,13 @@
                 </exclusion>
           </exclusions>    
 	    </dependency>
+
+        <!-- Spark SQL dependency -->
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_2.11</artifactId>
+            <version>2.1.0</version>
+        </dependency>
 
         <!-- Mac hack -->
         <dependency>
