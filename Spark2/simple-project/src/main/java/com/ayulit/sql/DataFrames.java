@@ -2,6 +2,7 @@ package com.ayulit.sql;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.sql.AnalysisException;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
@@ -11,7 +12,7 @@ import static org.apache.spark.sql.functions.col;
 
 public class DataFrames {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws AnalysisException {
 
         String appName = "CreatingDataFrames example";
         
@@ -36,7 +37,7 @@ public class DataFrames {
 //        df.show();
 
         
-        /* Untyped Dataset Operations (aka DataFrame Operations) */
+/* Untyped Dataset Operations (aka DataFrame Operations) */
 
         
         // Print the schema in a tree format
@@ -54,14 +55,25 @@ public class DataFrames {
         // Count people by age
 //        df.groupBy("age").count().show();
         
-        /* Running SQL Queries Programmatically */
+/* Running SQL Queries Programmatically */
         
         // Register the DataFrame as a SQL temporary view
-        df.createOrReplaceTempView("people");
+//        df.createOrReplaceTempView("people");
         
-        Dataset<Row> sqlDF = spark.sql("SELECT * FROM people");
+//        Dataset<Row> sqlDF = spark.sql("SELECT * FROM people");
         
-        sqlDF.show();
+//        sqlDF.show();
+        
+/* Global Temporary View */
+        
+        // Register the DataFrame as a global temporary view
+        df.createGlobalTempView("people");
+
+        // Global temporary view is tied to a system preserved database `global_temp`
+        spark.sql("SELECT * FROM global_temp.people").show();
+        
+        // Global temporary view is cross-session
+        spark.newSession().sql("SELECT * FROM global_temp.people").show();
         
         sc.close();
 
