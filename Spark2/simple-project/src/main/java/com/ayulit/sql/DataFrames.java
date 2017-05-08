@@ -33,26 +33,35 @@ public class DataFrames {
         Dataset<Row> df = spark.read().json(file);
 
         // Displays the content of the DataFrame to stdout
-        df.show();
+//        df.show();
 
         
         /* Untyped Dataset Operations (aka DataFrame Operations) */
 
         
         // Print the schema in a tree format
-        df.printSchema();
+//        df.printSchema();
 
         // Select only the "name" column
-        df.select("name").show();
+//        df.select("name").show();
  
         // Select everybody, but increment the age by 1
-        df.select(col("name"), col("age").plus(1)).show();
+//        df.select(col("name"), col("age").plus(1)).show();
         
         // Select people older than 26
-        df.filter(col("age").gt(26)).show();
+//        df.filter(col("age").gt(26)).show();
         
         // Count people by age
-        df.groupBy("age").count().show();
+//        df.groupBy("age").count().show();
+        
+        /* Running SQL Queries Programmatically */
+        
+        // Register the DataFrame as a SQL temporary view
+        df.createOrReplaceTempView("people");
+        
+        Dataset<Row> sqlDF = spark.sql("SELECT * FROM people");
+        
+        sqlDF.show();
         
         sc.close();
 
