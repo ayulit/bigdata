@@ -31,6 +31,13 @@ public class DataSources {
         // Generic Save Function - doesn't work on Windows ?!
 //        usersDF.select("name", "favorite_color").write().format("parquet").save("src/main/resources/namesAndFavColors.parquet");
 
+        // Run SQL on files directly
+        Dataset<Row> sqlDF =
+                spark.sql("SELECT * FROM parquet.`" + path + "`");
+        
+
+        
+        sc.close();
     }
 
 }
