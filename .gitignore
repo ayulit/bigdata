@@ -13,3 +13,8 @@ buildNumber.properties
 .classpath
 .project
 .settings
+
+# Avro
+*.avro
+*.crc
+_SUCCESS
