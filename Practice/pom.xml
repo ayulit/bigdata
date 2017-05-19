@@ -1,0 +1,72 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>ru.mera</groupId>
+	<artifactId>big-data-practice</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	
+	<properties>
+	   <spark.ver>2.1.1</spark.ver>
+	</properties>
+	
+    <dependencies>
+    
+        <!-- Spark Core dependency -->
+        <dependency>
+          <groupId>org.apache.spark</groupId>
+          <artifactId>spark-core_2.11</artifactId>
+          <version>${spark.ver}</version>
+          <!-- Exclusions for work on Mac -->
+          <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>log4j</artifactId>
+                    <groupId>log4j</groupId>
+                </exclusion>
+          </exclusions>    
+        </dependency>
+
+        <!-- Spark SQL dependency -->
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_2.11</artifactId>
+            <version>${spark.ver}</version>
+        </dependency>
+
+        <!-- Mac hack -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
+        </dependency>
+
+        <!-- Spark-Avro library -->
+        <dependency>
+            <groupId>com.databricks</groupId>
+            <artifactId>spark-avro_2.10</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        
+    </dependencies>  
+
+    <build>
+
+        <plugins>
+        
+            <!-- Java version setting -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+
+    </build>	
+	
+</project>
