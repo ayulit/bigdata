@@ -32,8 +32,16 @@ public class Task03 {
         // Creating DataFrame from avro
         Dataset<Row> df = spark.read().format("com.databricks.spark.avro").load("src/main/resources/autos.avro");        
         
+        // Creating DataFrame from JSON
+//        Dataset<Row> df = spark.read().json(file);
+        
         // Displays the content of the DataFrame to stdout
         df.show(); 
+
+        // Saves the subset of the Avro records read in
+        df.filter("modelYear > 1980").write().format("com.databricks.spark.avro").save("output/");
+        
+        System.out.println("Done.");
         
     }
 
