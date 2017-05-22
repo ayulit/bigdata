@@ -94,14 +94,14 @@ public class Task04 {
                             .withColumnRenamed("lastName", "Last_Name")
                             .withColumnRenamed("date", "Date");
         
-
-        
-        
         // Displays the content of the DataFrame to stdout
         df.show();         
 
         // Writing out DataFrame to avro
-        df.write().format("com.databricks.spark.avro").save("output/");
+//        df.write().format("com.databricks.spark.avro").save("output/");
+        
+        // Writing out DataFrame to parquet
+        df.write().format("parquet").save("persons.parquet");
         
         System.out.println("Done.");
         
