@@ -1,0 +1,2 @@
+arr1&arr2,101#map1&102#map2,11&varchar_1
+arr3&arr4,103#map3&104#map4,12&varchar_2
