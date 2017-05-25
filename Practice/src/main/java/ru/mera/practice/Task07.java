@@ -1,44 +1,66 @@
 package ru.mera.practice;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.Function2;
 
 import scala.Tuple2;
 
 public class Task07 {
+    
+    // It's useful to define a sum reducer -
+    // this is a function that takes in two integers and returns their sum
+    private static Function2<Integer, Integer, Integer> SUM_REDUCER = (a, b) -> a + b;
+    
+    private static class ValueComparator<K, V> implements Comparator<Tuple2<K, V>>, Serializable {
+
+        private static final long serialVersionUID = 1L;
+
+        private Comparator<V> comparator;
+
+        public ValueComparator(Comparator<V> comparator) {
+            this.comparator = comparator;
+        }
+
+        @Override
+        public int compare(Tuple2<K, V> t1, Tuple2<K, V> t2) {
+            // values of tuples comparison
+            return comparator.compare(t1._2(), t2._2());
+        }
+    }
 
     public static void main(String[] args) {
         
-        // Should be some file on your system in 'resources'
+        // Should be some file on system in 'resources'
         String logFile = "src/main/resources/task07.txt";
 
-        // Initializing Spark
+        // Create a Spark Context.
         SparkConf conf = new SparkConf().setAppName("Task07").setMaster("local[4]");
         JavaSparkContext sc = new JavaSparkContext(conf);
         
-        // External datasets
-        JavaRDD<String> lines = sc.textFile(logFile); // just a pointer to the file        
+        // Load the text file into Spark.
+        JavaRDD<String> logLines = sc.textFile(logFile); // just a pointer to the file        
         
-        // classical wordcount, nothing new there
-        JavaRDD<String> words = lines.flatMap(s -> Arrays.asList(s.split(" ")).iterator());
-        JavaPairRDD<String, Integer> pairs = words.mapToPair(word -> new Tuple2<>(word, 1));
-        JavaPairRDD<String, Integer> tuples = pairs.reduceByKey((a, b) -> a + b);
+        /* Code for processing logs. */
         
-        // to enable sorting by value (count) and not key -> value-to-key conversion pattern
-        JavaPairRDD<Integer, String> newTuples = tuples.mapToPair(tuple -> new Tuple2<Integer, String>(tuple._2, tuple._1));
+        // Convert the text log lines to LoginAssignmentLog objects and
+        // cache them since multiple transformations and actions will be called on the data.
+        JavaRDD<LoginAssignmentLog> accessLogs =
+                logLines.map(LoginAssignmentLog::parseFromLogLine).cache();        
+        
+        // Computing the top ten logins according to their frequency
+        List<Tuple2<String, Integer>> topLogins = accessLogs
+                .mapToPair(log -> new Tuple2<>(log.getUserID(), 1))
+                .reduceByKey(SUM_REDUCER)
+                .top(10, new ValueComparator<>(Comparator.<Integer>naturalOrder()));
+        
+        System.out.println("Top Logins: " + topLogins);
 
-        // sorting
-        JavaPairRDD<Integer, String> sortedTuples = newTuples.sortByKey(false);
-        
-        // printing
-        sortedTuples.take(10).forEach(tuple -> System.out.println(tuple));        
-        
         sc.close();
         
         System.out.println("Done.");
