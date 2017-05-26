@@ -24,7 +24,7 @@ public class Task08 {
         df.show();         
 
         // Writing out DataFrame to avro
-//        df.write().format("com.databricks.spark.avro").save("output1/");        
+        df.write().format("com.databricks.spark.avro").save("output1/");        
         
         System.out.println("Done.");
 
