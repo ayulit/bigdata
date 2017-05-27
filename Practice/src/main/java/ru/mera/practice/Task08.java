@@ -145,13 +145,12 @@ public class Task08 {
 
         // Register the function to access it
         spark.udf().register("viceMax", new ViceMax());
-
-        String query = "SELECT *, max(product_revenue) OVER w AS max, viceMax(product_revenue) OVER w AS 2dMax FROM products WINDOW w AS (PARTITION BY product_category) ORDER BY Id";
-
+           
+        String query = "SELECT p.Id,p.product_name,p.product_category,p.product_revenue, max(CASE WHEN maxpr = product_revenue THEN product_name END) OVER v AS mad_max, max(CASE WHEN 2dmaxpr = product_revenue THEN product_name END) OVER v AS mad_max2, maxpr-product_revenue AS delta FROM (SELECT *, max(product_revenue) OVER w AS maxpr, viceMax(product_revenue) OVER w AS 2dmaxpr FROM products WINDOW w AS (PARTITION BY product_category)) p WINDOW v AS (PARTITION BY product_category) ORDER by Id";
+        
         Dataset<Row> result = spark.sql(query);
         
         result.show();
-        
         
         System.out.println("Done.");
 
