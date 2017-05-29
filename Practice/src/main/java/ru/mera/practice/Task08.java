@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.expressions.MutableAggregationBuffer;
 import org.apache.spark.sql.expressions.UserDefinedAggregateFunction;
@@ -151,6 +152,9 @@ public class Task08 {
         Dataset<Row> result = spark.sql(query);
         
         result.show();
+        
+        // Writing out DataFrame to parquet
+        result.coalesce(1).write().format("parquet").partitionBy("product_category").mode(SaveMode.Append).save("products.parquet");
         
         System.out.println("Done.");
 
