@@ -127,22 +127,29 @@ public class Task08 {
         // Should be some file on your system in 'resources'
         String file = "src/main/resources/products.json";
         
+        // Winutils hack - for working with avro in windows
+        System.setProperty("hadoop.home.dir","c:\\winutils");
+        
         // The entry point into Spark SQL functionality
         SparkSession spark = SparkSession
                 .builder()
                 .master("local")
                 .getOrCreate();
 
+        // Configuration to use avro compression (Altova XMLSpy doesn't support 'snappy' and 'uncompressed' in some reason)
+        spark.conf().set("spark.sql.avro.compression.codec", "deflate");
+        spark.conf().set("spark.sql.avro.deflate.level", "5");
+        
         // Creating DataFrame from json, rearranging columns
         Dataset<Row> df = spark.read().json(file).selectExpr("Id","product_name","product_category","product_revenue");
         
         df.createOrReplaceTempView("products");
         
         // Displays the content of the DataFrame to stdout
-//        df.show();         
+        df.show();         
 
         // Writing out DataFrame to avro
-//        df.write().format("com.databricks.spark.avro").save("output1/");        
+        df.write().format("com.databricks.spark.avro").save("output/");        
 
         // Register the function to access it
         spark.udf().register("viceMax", new ViceMax());
